@@ -1,0 +1,13 @@
+{
+    "bucket": "bucket-name",
+    "prefix": "redshift/queries/",
+    "database": "database.json",
+    "tracker": "tracker.json",
+    "separator": {
+        "default": ",",
+        "alternate": "|",
+        "pattern": [
+            "Comments"
+        ]
+    }
+}

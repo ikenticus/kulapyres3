@@ -1,0 +1,7 @@
+{
+  "base": "dev",
+  "host": "CLUSTER.ZONE.REGION.redshift.amazonaws.com",
+  "password": "password",
+  "port": "3306",
+  "user": "username"
+}

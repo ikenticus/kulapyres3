@@ -1,0 +1,3 @@
+.chalice/deployments/
+__pycache__
+*.pyc
