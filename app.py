@@ -175,7 +175,7 @@ def crontab(event):
                          Payload=json.dumps({'dateserial': yymmdd}),
                          InvocationType='Event', LogType='None')
 '''
-@app.route('/process')
+@app.lambda_function(name='process')
 def process_handler(event, context):
     run_queries(event['dateserial'])
 
