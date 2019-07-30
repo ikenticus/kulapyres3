@@ -6,8 +6,8 @@ import psycopg2
 import re
 import sys
 
-from chalice import Chalice
-app = Chalice(app_name=os.path.basename(os.getcwd()))
+from flask import Flask
+app = Flask(os.path.basename(os.getcwd()))
 
 from chalicelib.pandas import *
 
@@ -153,6 +153,7 @@ def run_queries(sqldate = ''):
         put_completed(previous)
     put_completed([])
     cur.close()
+    return { 'Message': 'Successfully ran all queries' }
 
 def get_completed():
     try:
@@ -165,40 +166,29 @@ def put_completed(tables):
     s3.put_object(Bucket=cfg.bucket, Key=cfg.prefix+cfg.tracker, Body=json.dumps(tables).encode('utf-8'))
 
 
-# cron(M H D M DoW Y)
-@app.schedule('cron(0 6,16 * * ? *)')
-def crontab(event):
-    run_queries()
-
-
-# AWS Lambda function
-'''
-    lambda_client.invoke(FunctionName='kulapyres3-dev-queue',
-                         Payload=json.dumps({'dateserial': yymmdd}),
-                         InvocationType='Event', LogType='None')
-'''
-@app.lambda_function(name='process')
-def process_handler(event, context):
-    run_queries(event['dateserial'])
-
-
-# API Gateway routes:
+# Flask routes:
 @app.route('/')
 def index():
     return {'Lambda': 'Chalice'}
 
 @app.route('/process')
 def process():
-    run_queries()
+    return run_queries()
 
 @app.route('/process/{yyyymmdd}')
 def process_date(dateserial):
-    run_queries(dateserial)
+    return run_queries(dateserial)
 
 
 if __name__ == '__main__':
     #print(test_database_info())
+    # only run ONE of the following options:
+
+    # for cronjob, check args
     if len(sys.argv) > 1:
         run_queries(sys.argv[1])
     else:
         run_queries()
+
+    # for flask API, run app
+    app.run(debug=True, host='0.0.0.0')

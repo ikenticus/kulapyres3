@@ -1,0 +1,57 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: kulapyres3
+  namespace: tools
+  labels:
+    app: kulapyres3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kulapyres3
+  template:
+    metadata:
+      name: kulapyres3
+      labels:
+        app: kulapyres3
+    spec:
+      containers:
+      - name: kulapyres3
+        image: repository/kulapyres3
+        imagePullPolicy: Always
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: kulapyres3
+  namespace: tools
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 5000
+    protocol: TCP
+    name: http
+  selector:
+    app: kulapyres3
+
+---
+
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: kulapyres3
+  namespace: tools
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - host: kulapyres3.domain.net
+    http:
+      paths:
+      - backend:
+          serviceName: kulapyres3
+          servicePort: 5000

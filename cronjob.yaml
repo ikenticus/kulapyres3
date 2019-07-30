@@ -1,0 +1,14 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: kulapyres3
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: kulapyres3
+            image: repository/kulapyres3
+          restartPolicy: OnFailure

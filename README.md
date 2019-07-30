@@ -13,6 +13,21 @@ Initially you will want to configure the following files:
 ```
 aws s3 cp queries/database.json s3://bucket/redshift/queries/database.json
 ```
+* For Lambda, ensure that the `.chalice/config.json` matches your needs before deploying with Makefile below.
+* For Kubernetes, to avoid having to put AWS credentials, make sure to create and attach a policy that has the proper access to Redshift:
+```
+    ROLENAME=$( aws iam list-instance-profiles | grep RoleName\":.*eksctl-* | cut -d\" -f4 )
+    aws iam attach-role-policy --role-name ${ROLENAME} --policy-arn arn:aws:iam::AWS_ID:policy/kulapyres3-policy`
+```
+and that your EKS has access to Redshift in order to query.
+
+
+## Makefile
+The Makefile should have all the necessary commands to deploy to either Lambda or Kubernetes.
+* For Lambda simply run `make deploy-lambda` after you have made the Configuration changes above.
+* For Kubernetes, modify the `__main__` in the `pod.py` according to whether you want an API deployment or a cronjob and run `make docker` to build and push your container once you have updated the repository in the `Makefile`
+  * Modify `deploy.yaml` and run `make deploy-pod` for Flask API pod
+  * Modify `cronjob.yaml` accordingly and run `make deploy-cronjob` for scheduled python executions
 
 
 ## Nomenclature
@@ -25,11 +40,9 @@ aws s3 cp queries/database.json s3://bucket/redshift/queries/database.json
 * For queries involving handles, like the Instagram example, create a stand-in `handle/` subdirectory along with a corresponding `Total.Handles.sql` that resides in the same subdirectory. The application will loop through all the handle ids and replacing the `HANDLE_ID` within the `handle/*.sql` queries. All queries pertaining to each handle should reside in the `handle/` subdirectory as well.
 
 
-## Makefile
-The Makefile should have all the necessary commands to deploy to either Lambda `make deploy` or Kubernetes `make kube`.
-
-
 ## Updates
-Currently, this application only supports AWS Lambda. If will be updated to reflect kubernetes additions once that work has been completed.
+Currently, this application supports:
+* AWS Lambda via chalice
+* Kubernetes (tested on EKS)
 
 Aside from any functional changes that you may want to make to the application to handle additional prefices or suffices, once deployed, users should be able to obtain more data simply by adding additional SQL files that will generate additional CSV files automatically during each schedule execution.
