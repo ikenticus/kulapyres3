@@ -1,0 +1,132 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="report.css">
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.13/c3.min.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+        <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.13/c3.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+        <title>KuLaPyReS3 Sample Report</title>
+    </head>
+    <body>
+
+        <div class="kulapyres3-report"
+            data-handle="sample" style="width: 2380px"
+            data-prefix="https://s3.amazonaws.com/kulapyres3/redshift/instagram/">
+            <div class="kulapyres3-report-row banner">
+                <h1>
+                    Instagram<br><input class="kulapyres3-calendar">
+                    <br><div class="kulapyres3-choice" data-csv="Total.Handles.csv"></div>
+                </h1>
+            </div>
+            <div class="kulapyres3-report-row">
+                <div class="kulapyres3-report-cell">
+                    <h1>Current Followers<br><span id="current-followers" data-numeral="0,0"/></h1>
+                </div>
+                <div class="kulapyres3-report-cell">
+                    <div class="kulapyres3-table"
+                        data-csv="Table.PostLevelSumWoW.csv"
+                        data-extract='{
+                            "rowcol": {
+                                "#post-count": "0,post count",
+                                "#pct-change": "0,%change_cnt"
+                            }
+                        }'
+                        id="avg-imps-day-hour">
+                    </div>
+                </div>
+                <div class="kulapyres3-report-cell">
+                    <h1>Post Count<br><span id="post-count"/></h1>
+                </div>
+            <div class="kulapyres3-report-row">
+                <div class="kulapyres3-report-cell">
+                    Avg Net<br><span id="avgnet-followers" />
+                </div>
+                <div class="kulapyres3-report-cell">
+                    <div class="kulapyres3-table"
+                        data-csv="Table.WoWAvgs.csv"
+                        id="last-7-days-post">
+                    </div>
+                </div>
+                <div class="kulapyres3-report-cell">
+                    %change<br><span id="pct-change" />
+                </div>
+            </div>
+            <div class="kulapyres3-report-row">
+                <div class="kulapyres3-report-cell">
+                    <div class="kulapyres3-graph bar-chart"
+                        data-csv="Total.FollowerChange.csv"
+                        data-type="bar"
+                        data-bar='{"width":{"ratio":0.3}}'
+                        data-days="7"
+                        data-keys="new_followers,lost_followers,net"
+                        data-types='{"net":"line"}'
+                        data-extract='{
+                            "last": {"#current-followers": "followers_count"},
+                            "mean": {"#avgnet-followers": "net"}
+                        }'
+                        id="follower-comp-7">
+                    </div>
+                </div>
+                <div class="kulapyres3-report-cell">
+                    <div class="kulapyres3-graph bar-chart"
+                        data-csv="Total.ImpressionsByDayWeekPivot.csv"
+                        data-type="bar"
+                        data-axes='{"day":"y","week":"y2"}'
+                        data-types='{"week":"line"}'
+                        data-x="date"
+                        id="impressions-day-week">
+                    </div>
+                </div>
+                <div class="kulapyres3-report-cell">
+                    <div class="kulapyres3-graph bar-chart"
+                        data-csv="Total.MediaTypeCountsbyDayPivot.csv"
+                        data-type="bar"
+                        data-days="30"
+                        data-groups='[["CAROUSEL_ALBUM","IMAGE","VIDEO"]]'
+                        id="post-type-over-time">
+                    </div>
+                </div>
+            </div>
+            <div class="kulapyres3-report-row">
+                <div class="kulapyres3-report-cell">
+                    <div class="kulapyres3-graph line-chart"
+                        data-csv="Total.FollowerChange.csv"
+                        data-type="line"
+                        data-days="90"
+                        data-keys="followers_count"
+                        id="follower-count-90">
+                    </div>
+                </div>
+                <div class="kulapyres3-report-cell">
+                    <div class="kulapyres3-table"
+                        data-csv="Table.DayAndHourPerformancePivot.csv"
+                        data-empty-zero="true"
+                        data-heatmap="true"
+                        data-order="weekday"
+                        data-total="avg,col,row"
+                        id="avg-imps-day-hour">
+                    </div>
+                </div>
+                <div class="kulapyres3-report-cell">
+                    <div class="kulapyres3-modal" id="last-7-days-post-modal">
+                        <img width="200px" />
+                    </div>
+                    <div class="kulapyres3-table"
+                        data-csv="Table.TopPostsbyType.csv"
+                        data-apply="datatables"
+                        id="last-7-days-post">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="report.js"></script>
+    </body>
+</html>

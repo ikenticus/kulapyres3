@@ -40,6 +40,10 @@ The Makefile should have all the necessary commands to deploy to either Lambda o
 * For queries involving handles, like the Instagram example, create a stand-in `handle/` subdirectory along with a corresponding `Total.Handles.sql` that resides in the same subdirectory. The application will loop through all the handle ids and replacing the `HANDLE_ID` within the `handle/*.sql` queries. All queries pertaining to each handle should reside in the `handle/` subdirectory as well.
 
 
+## Reports
+Included is a `sample.html` using the `kulapyres3` all-in-one reporting CSS/JS logic along with a `sample.png` screenshot of the actual report generated with SQL/CSV files produced by this architecture.
+
+
 ## Updates
 Currently, this application supports:
 * AWS Lambda via chalice
